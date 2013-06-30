@@ -4,6 +4,13 @@ var app = angular.module('motorcontrol', []);
 
 app.config(function($routeProvider) {
   $routeProvider.
+    when('/graphs', {
+      templateUrl: './partials/graphs.html',
+      controller: function GraphsCtrl($scope) {
+        $scope.sets = sets;
+      }
+    }).
+
     when('/upload', {
       templateUrl: './partials/upload.html', 
       controller: function UploadCtrl($scope, $location) {
@@ -26,6 +33,8 @@ app.config(function($routeProvider) {
               name: setName,
               data: setData
             });
+
+            $location.path('/graphs');
           }
         }
       }
