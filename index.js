@@ -8,7 +8,7 @@ app.config(function($routeProvider) {
       templateUrl: './partials/upload.html', 
       controller: function UploadCtrl($scope) {
         $scope.parseSet = function(content) {
-          var setsText = content.split('\n##');
+          var setsText = content.split("\n##");
           for (var i = 0; i < setsText.length; i++) {
             var setLines = setsText[i].split('\n');
 
