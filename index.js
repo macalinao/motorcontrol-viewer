@@ -1,4 +1,4 @@
-var sets = {};
+var sets = [];
 
 var app = angular.module('motorcontrol', []);
 
@@ -6,7 +6,7 @@ app.config(function($routeProvider) {
   $routeProvider.
     when('/upload', {
       templateUrl: './partials/upload.html', 
-      controller: function UploadCtrl($scope) {
+      controller: function UploadCtrl($scope, $location) {
         $scope.parseSet = function(content) {
           var setsText = content.split("\n##");
           for (var i = 0; i < setsText.length; i++) {
@@ -22,7 +22,10 @@ app.config(function($routeProvider) {
               setName = setName.substring(2, setName.length);
             }
 
-            sets[setName] = setData;
+            sets.push({
+              name: setName,
+              data: setData
+            });
           }
         }
       }
