@@ -73,7 +73,7 @@ app.directive('fileUpload', function($parse) {
     link: function(scope, element, attrs) {
       var fn = $parse(attrs.fileUpload);
 
-      element      
+      element
         .on('dragover', function(e) {
           $(this).addClass('hover');
           e.preventDefault();
