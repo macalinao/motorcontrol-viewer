@@ -1,12 +1,12 @@
-var sets = [];
-
-var app = angular.module('motorcontrol', []);
+var app = angular.module('motorcontrol', ['ui.bootstrap']);
 
 app.config(function($routeProvider) {
   $routeProvider.
     when('/graphs', {
       templateUrl: './partials/graphs.html',
-      controller: function GraphsCtrl($scope) {
+      controller: function GraphsCtrl($scope, sets) {
+        $scope.graphSelect = 'all';
+
         $scope.graph = {
           title: {
             text: 'Data Set Graphs'
@@ -27,12 +27,35 @@ app.config(function($routeProvider) {
           },
           series: sets
         };
+
+        $scope.$watch(function() { return $scope.graphSelect }, function(val) {
+          switch(val) {
+            case 'all':
+              $scope.graph.series = sets;
+              break;
+
+            case 'hbo':
+              var use = [];
+              for (var i = 0; i < sets.length; i++) {
+                if (sets[i].name.indexOf('HbO Unsmoothed') != -1) {
+                  use.push(sets[i]);
+                }
+              }
+              $scope.graph.series = use;
+              break;
+
+            default:
+              $scope.graph.series = [];
+              console.log('asdf');
+              break;
+          }
+        });
       }
     }).
 
     when('/upload', {
       templateUrl: './partials/upload.html', 
-      controller: function UploadCtrl($scope, $location) {
+      controller: function UploadCtrl($scope, $location, sets) {
         $scope.parseSet = function(content) {
           var setsText = content.split("\n##");
           for (var i = 0; i < setsText.length; i++) {
@@ -107,9 +130,9 @@ app.directive('chart', function () {
     restrict: 'E',
     template: '<div></div>',
     scope: {
-        chartData: "=value"
+        chartData: '=value'
     },
-    transclude:true,
+    transclude: true,
     replace: true,
 
     link: function (scope, element, attrs) {
@@ -123,16 +146,20 @@ app.directive('chart', function () {
       };
       
       //Update when charts data changes
-      scope.$watch(function() { return scope.chartData; }, function(value) {
+      scope.$watch(function() { return scope.chartData.series; }, function(value) {
         if(!value) return;
-          // We need deep copy in order to NOT override original chart object.
-          // This allows us to override chart data member and still the keep
-          // our original renderTo will be the same
-          var deepCopy = true;
-          var newSettings = {};
-          $.extend(deepCopy, newSettings, chartsDefaults, scope.chartData);
-          var chart = new Highcharts.Chart(newSettings);
+        window.scope = scope;
+        
+        // We need deep copy in order to NOT override original chart object.
+        // This allows us to override chart data member and still the keep
+        // our original renderTo will be the same
+        var deepCopy = true;
+        var newSettings = {};
+        $.extend(deepCopy, newSettings, chartsDefaults, scope.chartData);
+        var chart = new Highcharts.Chart(newSettings);
       });
     }
   };
 });
+
+app.value('sets', []);
