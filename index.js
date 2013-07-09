@@ -5,6 +5,11 @@ app.config(function($routeProvider) {
     when('/graphs', {
       templateUrl: './partials/graphs.html',
       controller: function GraphsCtrl($scope, sets) {
+        if (sets.length == 0) {
+          $location.path('/upload');
+          return;
+        }
+
         $scope.graphSelect = 'all';
 
         $scope.graph = {
@@ -149,7 +154,7 @@ app.directive('chart', function () {
       scope.$watch(function() { return scope.chartData.series; }, function(value) {
         if(!value) return;
         window.scope = scope;
-        
+
         // We need deep copy in order to NOT override original chart object.
         // This allows us to override chart data member and still the keep
         // our original renderTo will be the same
